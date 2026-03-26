@@ -114,7 +114,7 @@ const Scene = () => {
 }
 
 export const Hero3DWebGL = () => {
-  const titleWords = "Proxy Fast".split(" ")
+  const titleWords = "Подорожник".split(" ")
   const subtitle = "Быстрый и надёжный прокси-сервер. Анонимность в интернете без лишних сложностей."
   const [visibleWords, setVisibleWords] = useState(0)
   const [subtitleVisible, setSubtitleVisible] = useState(false)

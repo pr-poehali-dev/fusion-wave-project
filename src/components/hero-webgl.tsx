@@ -120,6 +120,8 @@ export const Hero3DWebGL = () => {
   const [subtitleVisible, setSubtitleVisible] = useState(false)
   const [delays, setDelays] = useState<number[]>([])
   const [subtitleDelay, setSubtitleDelay] = useState(0)
+  const [connected, setConnected] = useState(false)
+  const [connecting, setConnecting] = useState(false)
 
   useEffect(() => {
     setDelays(titleWords.map(() => Math.random() * 0.07))
@@ -136,6 +138,18 @@ export const Hero3DWebGL = () => {
     }
   }, [visibleWords, titleWords.length])
 
+  const handleConnect = () => {
+    if (connected) {
+      setConnected(false)
+      return
+    }
+    setConnecting(true)
+    setTimeout(() => {
+      setConnecting(false)
+      setConnected(true)
+    }, 1800)
+  }
+
   return (
     <div className="h-screen bg-black relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none z-10">
@@ -145,8 +159,9 @@ export const Hero3DWebGL = () => {
         <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-black to-transparent" />
       </div>
 
-      <div className="h-screen uppercase items-center w-full absolute z-[60] pointer-events-none px-4 md:px-10 flex justify-center flex-col">
-        <div className="text-2xl sm:text-3xl md:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold font-orbitron">
+      <div className="h-screen items-center w-full absolute z-[60] px-4 md:px-10 flex justify-center flex-col gap-6 md:gap-8">
+        {/* Title */}
+        <div className="text-2xl sm:text-3xl md:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold font-orbitron uppercase pointer-events-none">
           <div className="flex space-x-2 lg:space-x-6 overflow-hidden text-white">
             {titleWords.map((word, index) => (
               <div
@@ -162,7 +177,9 @@ export const Hero3DWebGL = () => {
             ))}
           </div>
         </div>
-        <div className="text-sm md:text-xl xl:text-2xl 2xl:text-3xl mt-3 overflow-hidden text-white font-bold max-w-4xl mx-auto text-center px-2 leading-relaxed normal-case">
+
+        {/* Subtitle */}
+        <div className="text-sm md:text-xl xl:text-2xl 2xl:text-3xl overflow-hidden text-white/70 font-medium max-w-xl mx-auto text-center px-2 leading-relaxed pointer-events-none">
           <div
             className={subtitleVisible ? "fade-in-subtitle" : ""}
             style={{
@@ -172,6 +189,60 @@ export const Hero3DWebGL = () => {
           >
             {subtitle}
           </div>
+        </div>
+
+        {/* Connect Button */}
+        <div className="flex flex-col items-center gap-3 mt-2">
+          <button
+            onClick={handleConnect}
+            className="relative group focus:outline-none"
+            style={{ WebkitTapHighlightColor: "transparent" }}
+          >
+            {/* Pulse rings */}
+            {connected && (
+              <>
+                <span className="absolute inset-0 rounded-full bg-green-500/20 animate-ping" style={{ animationDuration: "2s" }} />
+                <span className="absolute inset-[-8px] rounded-full bg-green-500/10 animate-ping" style={{ animationDuration: "2.5s", animationDelay: "0.3s" }} />
+              </>
+            )}
+            {connecting && (
+              <span className="absolute inset-0 rounded-full border-4 border-green-400/40 border-t-green-400 animate-spin" />
+            )}
+            {/* Circle */}
+            <div
+              className={`
+                w-28 h-28 md:w-36 md:h-36 rounded-full flex items-center justify-center
+                border-4 transition-all duration-500 shadow-2xl
+                ${connected
+                  ? "bg-green-600 border-green-400 shadow-green-500/40"
+                  : connecting
+                  ? "bg-gray-900 border-green-500/60 shadow-green-500/20"
+                  : "bg-gray-900 border-white/20 hover:border-green-500/60 hover:shadow-green-500/20 group-active:scale-95"
+                }
+              `}
+            >
+              <div className={`flex flex-col items-center gap-1 transition-all duration-300 ${connecting ? "opacity-40" : "opacity-100"}`}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  className={`${connected ? "text-white" : "text-white/70"}`}>
+                  <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" opacity="0.3"/>
+                  <path d="M12 6v6l4 2"/>
+                  {connected
+                    ? <><path d="M5 12a7 7 0 0 1 14 0"/><path d="M12 2v2"/><path d="M12 20v2"/></>
+                    : <><circle cx="12" cy="12" r="3"/><path d="M12 5v2M12 17v2M5 12H3M21 12h-2"/></>
+                  }
+                </svg>
+                <span className={`text-xs font-bold font-orbitron tracking-widest uppercase ${connected ? "text-white" : "text-white/50"}`}>
+                  {connecting ? "..." : connected ? "ON" : "OFF"}
+                </span>
+              </div>
+            </div>
+          </button>
+
+          <p className={`text-xs font-medium tracking-widest uppercase transition-colors duration-500 ${
+            connected ? "text-green-400" : connecting ? "text-green-500/60" : "text-white/30"
+          }`}>
+            {connecting ? "Подключение..." : connected ? "Подключено" : "Нажмите для подключения"}
+          </p>
         </div>
       </div>
 

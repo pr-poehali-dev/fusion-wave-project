@@ -80,11 +80,11 @@ export function ApplicationsTimeline() {
   ]
 
   return (
-    <section id="applications" className="py-20 bg-black">
+    <section id="applications" className="py-12 md:py-20 bg-black">
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-10">
-        <div className="text-center mb-16">
-          <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-6">Как это помогает вам</h2>
-          <p className="text-gray-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+        <div className="text-center mb-10 md:mb-16">
+          <h2 className="font-display text-2xl md:text-5xl font-bold text-white mb-4 md:mb-6">Как это помогает вам</h2>
+          <p className="text-gray-300 text-base md:text-xl max-w-3xl mx-auto leading-relaxed">
             Прокси-сервер решает три главных задачи — анонимность, свобода в интернете и защита данных.
           </p>
         </div>

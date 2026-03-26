@@ -25,21 +25,21 @@ export function SplitTunnelSection() {
   const activeCount = Object.values(appStates).filter(Boolean).length
 
   return (
-    <section id="split-tunnel" className="py-24 px-6 bg-black">
+    <section id="split-tunnel" className="py-12 md:py-20 px-4 md:px-6 bg-black">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white mb-4 font-orbitron">
+        <div className="text-center mb-10 md:mb-16">
+          <h2 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4 font-orbitron">
             Раздельное туннелирование
           </h2>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
             Выберите, какие приложения работают через прокси, а какие — напрямую. Полный контроль над трафиком.
           </p>
         </div>
 
         <Card className="bg-gray-900 border border-green-500/20">
           <CardHeader className="border-b border-green-500/10 pb-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <CardTitle className="text-white font-orbitron text-lg">Управление трафиком</CardTitle>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <CardTitle className="text-white font-orbitron text-base md:text-lg">Управление трафиком</CardTitle>
               <div className="flex items-center gap-3 bg-black/40 rounded-lg p-1">
                 <button
                   onClick={() => setTunnelMode("include")}
@@ -70,22 +70,22 @@ export function SplitTunnelSection() {
             </p>
           </CardHeader>
 
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <CardContent className="pt-4 md:pt-6 px-3 md:px-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
               {apps.map((app) => (
                 <div
                   key={app.name}
-                  className="flex items-center justify-between px-4 py-3 rounded-lg bg-black/40 border border-white/5 hover:border-green-500/30 transition-all duration-200"
+                  className="flex items-center justify-between px-3 md:px-4 py-3 rounded-lg bg-black/40 border border-white/5 hover:border-green-500/30 transition-all duration-200"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-md bg-green-500/10 flex items-center justify-center">
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <div className="w-8 h-8 rounded-md bg-green-500/10 flex items-center justify-center shrink-0">
                       <Icon name={app.icon} size={16} className="text-green-400" />
                     </div>
                     <span className="text-white text-sm font-medium">{app.name}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {appStates[app.name] && (
-                      <Badge className="bg-green-600/20 text-green-400 border-0 text-xs">
+                      <Badge className="bg-green-600/20 text-green-400 border-0 text-xs hidden sm:inline-flex">
                         {tunnelMode === "include" ? "Прокси" : "Прямой"}
                       </Badge>
                     )}

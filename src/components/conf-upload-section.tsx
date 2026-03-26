@@ -69,29 +69,29 @@ export function ConfUploadSection() {
   }
 
   return (
-    <section id="conf-upload" className="py-24 px-6 bg-gray-950">
+    <section id="conf-upload" className="py-12 md:py-20 px-4 md:px-6 bg-gray-950">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white mb-4 font-orbitron">
+        <div className="text-center mb-10 md:mb-16">
+          <h2 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4 font-orbitron">
             Свой прокси-конфиг
           </h2>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
             Загрузите готовый .conf файл от вашего провайдера — Подорожник применит настройки автоматически.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
           {/* Upload zone */}
           <Card className="bg-gray-900 border border-green-500/20">
-            <CardHeader>
-              <CardTitle className="text-white font-orbitron text-lg flex items-center gap-2">
-                <Icon name="Upload" size={20} className="text-green-400" />
+            <CardHeader className="pb-3 md:pb-6">
+              <CardTitle className="text-white font-orbitron text-base md:text-lg flex items-center gap-2">
+                <Icon name="Upload" size={18} className="text-green-400" />
                 Загрузить конфигурацию
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 md:px-6">
               <div
-                className={`relative border-2 border-dashed rounded-xl p-10 text-center transition-all duration-200 cursor-pointer ${
+                className={`relative border-2 border-dashed rounded-xl p-6 md:p-10 text-center transition-all duration-200 cursor-pointer ${
                   dragging
                     ? "border-green-400 bg-green-500/10"
                     : "border-green-500/30 hover:border-green-500/60 hover:bg-green-500/5"
@@ -109,12 +109,12 @@ export function ConfUploadSection() {
                   onChange={onInputChange}
                 />
                 <div className="flex flex-col items-center gap-3">
-                  <div className="w-14 h-14 rounded-full bg-green-500/10 flex items-center justify-center">
-                    <Icon name="FileText" size={28} className="text-green-400" />
+                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-green-500/10 flex items-center justify-center">
+                    <Icon name="FileText" size={22} className="text-green-400" />
                   </div>
                   <div>
-                    <p className="text-white font-medium">Перетащите файл сюда</p>
-                    <p className="text-gray-500 text-sm mt-1">или нажмите для выбора</p>
+                    <p className="text-white font-medium text-sm md:text-base">Нажмите для выбора файла</p>
+                    <p className="text-gray-500 text-xs md:text-sm mt-1 hidden md:block">или перетащите сюда</p>
                   </div>
                   <div className="flex gap-2 flex-wrap justify-center mt-1">
                     {[".conf", ".ovpn", ".ini"].map((ext) => (

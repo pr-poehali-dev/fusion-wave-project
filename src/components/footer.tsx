@@ -3,21 +3,21 @@ import { Github, Twitter, Linkedin, Mail } from "lucide-react"
 export function Footer() {
   return (
     <footer className="bg-black border-t border-green-500/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Brand */}
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
+          <div className="col-span-2 md:col-span-2">
+            <div className="flex items-center gap-2 mb-3 md:mb-4">
               <img
                 src="https://cdn.poehali.dev/projects/7b9f1394-775e-4493-8cc4-e8beb90a3ef4/files/b6ffe8e8-e823-4422-bc93-c9f286e9ef4f.jpg"
                 alt="Подорожник"
-                className="w-8 h-8 rounded-md object-cover"
+                className="w-7 h-7 md:w-8 md:h-8 rounded-md object-cover"
               />
-              <h2 className="font-orbitron text-2xl font-bold text-white">
+              <h2 className="font-orbitron text-lg md:text-2xl font-bold text-white">
                 Подо<span className="text-green-400">рожник</span>
               </h2>
             </div>
-            <p className="font-space-mono text-gray-300 mb-6 max-w-md">
+            <p className="font-space-mono text-gray-300 mb-4 md:mb-6 max-w-md text-sm md:text-base">
               Быстрый и надёжный прокси-сервер для анонимной и свободной работы в интернете.
             </p>
             <div className="flex space-x-4">

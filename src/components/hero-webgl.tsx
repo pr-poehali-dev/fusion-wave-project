@@ -3,6 +3,16 @@ import { useAspect, useTexture } from "@react-three/drei"
 import { useMemo, useRef, useState, useEffect } from "react"
 import * as THREE from "three"
 
+const LEAF_IMG = "https://cdn.poehali.dev/projects/7b9f1394-775e-4493-8cc4-e8beb90a3ef4/files/d523d943-f40d-4285-81f9-7e52b3947ad4.jpg"
+
+const servers = [
+  { country: "🇳🇱 Нидерланды", city: "Амстердам", ping: 28 },
+  { country: "🇩🇪 Германия",   city: "Франкфурт", ping: 35 },
+  { country: "🇫🇮 Финляндия",  city: "Хельсинки", ping: 42 },
+  { country: "🇺🇸 США",        city: "Нью-Йорк",  ping: 110 },
+  { country: "🇸🇬 Сингапур",   city: "Сингапур",  ping: 165 },
+]
+
 const TEXTUREMAP = { src: "https://i.postimg.cc/XYwvXN8D/img-4.png" }
 const DEPTHMAP = { src: "https://i.postimg.cc/2SHKQh2q/raw-4.webp" }
 
@@ -115,13 +125,16 @@ const Scene = () => {
 
 export const Hero3DWebGL = () => {
   const titleWords = "Подорожник".split(" ")
-  const subtitle = "Быстрый и надёжный прокси-сервер. Анонимность в интернете без лишних сложностей."
   const [visibleWords, setVisibleWords] = useState(0)
   const [subtitleVisible, setSubtitleVisible] = useState(false)
   const [delays, setDelays] = useState<number[]>([])
   const [subtitleDelay, setSubtitleDelay] = useState(0)
   const [connected, setConnected] = useState(false)
   const [connecting, setConnecting] = useState(false)
+  const [selectedServer, setSelectedServer] = useState(0)
+  const [showServers, setShowServers] = useState(false)
+  const [ping, setPing] = useState<number | null>(null)
+  const [speed, setSpeed] = useState<number | null>(null)
 
   useEffect(() => {
     setDelays(titleWords.map(() => Math.random() * 0.07))
@@ -138,17 +151,31 @@ export const Hero3DWebGL = () => {
     }
   }, [visibleWords, titleWords.length])
 
+  useEffect(() => {
+    if (!connected) { setPing(null); setSpeed(null); return }
+    const base = servers[selectedServer].ping
+    setPing(base + Math.floor(Math.random() * 6))
+    setSpeed(Math.floor(80 + Math.random() * 120))
+    const interval = setInterval(() => {
+      setPing(base + Math.floor(Math.random() * 8))
+      setSpeed(Math.floor(80 + Math.random() * 120))
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [connected, selectedServer])
+
   const handleConnect = () => {
-    if (connected) {
-      setConnected(false)
-      return
-    }
+    if (connected) { setConnected(false); return }
     setConnecting(true)
-    setTimeout(() => {
-      setConnecting(false)
-      setConnected(true)
-    }, 1800)
+    setTimeout(() => { setConnecting(false); setConnected(true) }, 1800)
   }
+
+  const selectServer = (i: number) => {
+    setSelectedServer(i)
+    setShowServers(false)
+    if (connected) { setConnected(false); setConnecting(true); setTimeout(() => { setConnecting(false); setConnected(true) }, 1200) }
+  }
+
+  const pingColor = ping === null ? "text-white/30" : ping < 50 ? "text-green-400" : ping < 100 ? "text-yellow-400" : "text-red-400"
 
   return (
     <div className="h-screen bg-black relative overflow-hidden">
@@ -159,80 +186,79 @@ export const Hero3DWebGL = () => {
         <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-black to-transparent" />
       </div>
 
-      <div className="h-screen items-center w-full absolute z-[60] px-4 md:px-10 flex justify-center flex-col gap-6 md:gap-8">
+      <div className="h-screen items-center w-full absolute z-[60] px-4 md:px-10 flex justify-center flex-col gap-4 md:gap-6">
+
         {/* Title */}
-        <div className="text-2xl sm:text-3xl md:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold font-orbitron uppercase pointer-events-none">
+        <div className="text-2xl sm:text-3xl md:text-5xl xl:text-6xl font-extrabold font-orbitron uppercase pointer-events-none">
           <div className="flex space-x-2 lg:space-x-6 overflow-hidden text-white">
             {titleWords.map((word, index) => (
-              <div
-                key={index}
-                className={index < visibleWords ? "fade-in" : ""}
-                style={{
-                  animationDelay: `${index * 0.13 + (delays[index] || 0)}s`,
-                  opacity: index < visibleWords ? undefined : 0,
-                }}
-              >
+              <div key={index} className={index < visibleWords ? "fade-in" : ""}
+                style={{ animationDelay: `${index * 0.13 + (delays[index] || 0)}s`, opacity: index < visibleWords ? undefined : 0 }}>
                 {word}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Subtitle */}
-        <div className="text-sm md:text-xl xl:text-2xl 2xl:text-3xl overflow-hidden text-white/70 font-medium max-w-xl mx-auto text-center px-2 leading-relaxed pointer-events-none">
-          <div
-            className={subtitleVisible ? "fade-in-subtitle" : ""}
-            style={{
-              animationDelay: `${titleWords.length * 0.13 + 0.2 + subtitleDelay}s`,
-              opacity: subtitleVisible ? undefined : 0,
-            }}
+        {/* Server selector */}
+        <div className="relative">
+          <button
+            onClick={() => setShowServers(v => !v)}
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 hover:border-green-500/40 transition-all duration-200 text-sm text-white/70 hover:text-white"
+            style={{ WebkitTapHighlightColor: "transparent" }}
           >
-            {subtitle}
-          </div>
+            <span>{servers[selectedServer].country}</span>
+            <span className="text-white/30">·</span>
+            <span className="text-white/50 text-xs">{servers[selectedServer].city}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform duration-200 ${showServers ? "rotate-180" : ""}`}>
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </button>
+
+          {showServers && (
+            <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-56 bg-gray-950 border border-green-500/20 rounded-xl overflow-hidden shadow-2xl z-50">
+              {servers.map((s, i) => (
+                <button key={i} onClick={() => selectServer(i)}
+                  className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors duration-150 hover:bg-green-500/10 ${i === selectedServer ? "text-green-400 bg-green-500/5" : "text-white/70"}`}
+                >
+                  <span>{s.country}</span>
+                  <span className={`text-xs font-mono ${s.ping < 50 ? "text-green-400" : s.ping < 100 ? "text-yellow-400" : "text-red-400"}`}>{s.ping} мс</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Connect Button */}
-        <div className="flex flex-col items-center gap-3 mt-2">
+        {/* Leaf button */}
+        <div className="flex flex-col items-center gap-3">
           <button
             onClick={handleConnect}
             className="relative group focus:outline-none"
             style={{ WebkitTapHighlightColor: "transparent" }}
           >
-            {/* Pulse rings */}
             {connected && (
               <>
-                <span className="absolute inset-0 rounded-full bg-green-500/20 animate-ping" style={{ animationDuration: "2s" }} />
-                <span className="absolute inset-[-8px] rounded-full bg-green-500/10 animate-ping" style={{ animationDuration: "2.5s", animationDelay: "0.3s" }} />
+                <span className="absolute inset-[-4px] rounded-full bg-green-500/15 animate-ping" style={{ animationDuration: "2.2s" }} />
+                <span className="absolute inset-[-16px] rounded-full bg-green-500/08 animate-ping" style={{ animationDuration: "3s", animationDelay: "0.4s" }} />
               </>
             )}
             {connecting && (
-              <span className="absolute inset-0 rounded-full border-4 border-green-400/40 border-t-green-400 animate-spin" />
+              <span className="absolute inset-[-4px] rounded-full border-4 border-green-400/30 border-t-green-400 animate-spin" />
             )}
-            {/* Circle */}
-            <div
-              className={`
-                w-28 h-28 md:w-36 md:h-36 rounded-full flex items-center justify-center
-                border-4 transition-all duration-500 shadow-2xl
-                ${connected
-                  ? "bg-green-600 border-green-400 shadow-green-500/40"
-                  : connecting
-                  ? "bg-gray-900 border-green-500/60 shadow-green-500/20"
-                  : "bg-gray-900 border-white/20 hover:border-green-500/60 hover:shadow-green-500/20 group-active:scale-95"
-                }
-              `}
-            >
-              <div className={`flex flex-col items-center gap-1 transition-all duration-300 ${connecting ? "opacity-40" : "opacity-100"}`}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                  className={`${connected ? "text-white" : "text-white/70"}`}>
-                  <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" opacity="0.3"/>
-                  <path d="M12 6v6l4 2"/>
-                  {connected
-                    ? <><path d="M5 12a7 7 0 0 1 14 0"/><path d="M12 2v2"/><path d="M12 20v2"/></>
-                    : <><circle cx="12" cy="12" r="3"/><path d="M12 5v2M12 17v2M5 12H3M21 12h-2"/></>
-                  }
-                </svg>
-                <span className={`text-xs font-bold font-orbitron tracking-widest uppercase ${connected ? "text-white" : "text-white/50"}`}>
-                  {connecting ? "..." : connected ? "ON" : "OFF"}
+
+            <div className={`
+              relative w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden transition-all duration-500
+              border-4 shadow-2xl group-active:scale-95
+              ${connected ? "border-green-400 shadow-green-500/50" : connecting ? "border-green-500/50 shadow-green-500/20" : "border-white/10 hover:border-green-500/40 shadow-black"}
+            `}>
+              <img
+                src={LEAF_IMG}
+                alt="Подорожник"
+                className={`w-full h-full object-cover transition-all duration-500 ${connected ? "brightness-110 saturate-150" : "brightness-60 saturate-50 hover:brightness-90"} ${connecting ? "brightness-50 saturate-0 animate-pulse" : ""}`}
+              />
+              <div className={`absolute inset-0 flex flex-col items-center justify-end pb-3 transition-all duration-300`}>
+                <span className={`text-xs font-extrabold font-orbitron tracking-widest drop-shadow-lg ${connected ? "text-green-300" : "text-white/60"}`}>
+                  {connecting ? "..." : connected ? "ВКЛ" : "ВЫКЛ"}
                 </span>
               </div>
             </div>
@@ -244,6 +270,24 @@ export const Hero3DWebGL = () => {
             {connecting ? "Подключение..." : connected ? "Подключено" : "Нажмите для подключения"}
           </p>
         </div>
+
+        {/* Stats */}
+        <div className={`flex items-center gap-6 transition-all duration-700 ${connected ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+          <div className="flex flex-col items-center gap-0.5">
+            <span className={`text-xl md:text-2xl font-bold font-orbitron tabular-nums transition-colors duration-300 ${pingColor}`}>
+              {ping !== null ? `${ping}` : "—"}
+            </span>
+            <span className="text-white/30 text-xs uppercase tracking-widest">мс · пинг</span>
+          </div>
+          <div className="w-px h-8 bg-white/10" />
+          <div className="flex flex-col items-center gap-0.5">
+            <span className="text-xl md:text-2xl font-bold font-orbitron tabular-nums text-green-400">
+              {speed !== null ? `${speed}` : "—"}
+            </span>
+            <span className="text-white/30 text-xs uppercase tracking-widest">Мб/с · скорость</span>
+          </div>
+        </div>
+
       </div>
 
       <Canvas
